@@ -81,14 +81,20 @@ public class Main {
     /** Reads the user command and executes it, until the user issues the exit command.  */
     private void runCommandLoopUntilExitCommand() {
         Command command;
-        do {
-            String userCommandText = ui.getUserCommand();
-            command = new Parser().parseCommand(userCommandText);
-            CommandResult result = executeCommand(command);
-            recordResult(result);
-            ui.showResultToUser(result);
+        try {
+            do {
+                String userCommandText = ui.getUserCommand();
+                command = new Parser().parseCommand(userCommandText);
+                CommandResult result = executeCommand(command);
+                recordResult(result);
+                ui.showResultToUser(result);
 
-        } while (!ExitCommand.isExit(command));
+            } while (!ExitCommand.isExit(command));
+        } catch (StorageOperationException e) {
+            ui.showToUser(e.getMessage());
+            ui.showToUser("Please check if save file is not read-only and address book is of proper format.");
+            exit();
+        }
     }
 
     /** Updates the {@link #lastShownList} if the result contains a list of Persons. */
@@ -105,12 +111,14 @@ public class Main {
      * @param command user command
      * @return result of the command
      */
-    private CommandResult executeCommand(Command command)  {
+    private CommandResult executeCommand(Command command) throws StorageOperationException {
         try {
             command.setData(addressBook, lastShownList);
             CommandResult result = command.execute();
             storage.save(addressBook);
             return result;
+        } catch (StorageOperationException e) {
+            throw new StorageOperationException(e.getMessage());
         } catch (Exception e) {
             ui.showToUser(e.getMessage());
             throw new RuntimeException(e);
