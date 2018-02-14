@@ -15,7 +15,7 @@ import seedu.addressbook.data.tag.UniqueTagList;
  */
 public class TypicalPersons {
 
-    public Person amy, bill, candy, dan;
+    public Person dan, candy, bill, amy;
 
     public TypicalPersons() {
         try {
@@ -44,7 +44,7 @@ public class TypicalPersons {
     }
 
     public Person[] getTypicalPersons() {
-        return new Person[]{amy, bill, candy, dan};
+        return new Person[]{dan, candy, bill, amy};
     }
 
     public AddressBook getTypicalAddressBook() {
